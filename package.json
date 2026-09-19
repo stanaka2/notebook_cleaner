@@ -1,9 +1,9 @@
 {
   "name": "notebook-cleaner",
-  "displayName": "Notebook Cleaner",
+  "displayName": "%extension.displayName%",
   "publisher": "stanaka",
-  "description": "Safely clear outputs and remove empty cells from Jupyter notebooks in bulk.",
-  "version": "0.1.0",
+  "description": "%extension.description%",
+  "version": "0.1.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "clean"
   ],
   "main": "./extension.js",
+  "l10n": "./l10n",
   "activationEvents": [
     "onCommand:notebookCleaner.clearOutputs",
     "onCommand:notebookCleaner.removeEmptyCells",
@@ -33,41 +34,51 @@
     "commands": [
       {
         "command": "notebookCleaner.clearOutputs",
-        "title": "Clear All Outputs",
-        "category": "Notebook Cleaner"
+        "title": "%command.clearOutputs.title%",
+        "category": "%command.category%"
       },
       {
         "command": "notebookCleaner.removeEmptyCells",
-        "title": "Remove Empty Cells",
-        "category": "Notebook Cleaner"
+        "title": "%command.removeEmptyCells.title%",
+        "category": "%command.category%"
       },
       {
         "command": "notebookCleaner.cleanNotebook",
-        "title": "Clean Notebook",
-        "category": "Notebook Cleaner"
+        "title": "%command.cleanNotebook.title%",
+        "category": "%command.category%"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "notebookCleaner.context",
+        "label": "%submenu.label%"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "notebookCleaner.clearOutputs",
+          "submenu": "notebookCleaner.context",
           "when": "resourceExtname == .ipynb || explorerResourceIsFolder",
-          "group": "notebookCleaner@1"
+          "group": "notebookCleaner"
+        }
+      ],
+      "notebookCleaner.context": [
+        {
+          "command": "notebookCleaner.clearOutputs",
+          "group": "1_actions@1"
         },
         {
           "command": "notebookCleaner.removeEmptyCells",
-          "when": "resourceExtname == .ipynb || explorerResourceIsFolder",
-          "group": "notebookCleaner@2"
+          "group": "1_actions@2"
         },
         {
           "command": "notebookCleaner.cleanNotebook",
-          "when": "resourceExtname == .ipynb || explorerResourceIsFolder",
-          "group": "notebookCleaner@3"
+          "group": "1_actions@3"
         }
       ]
     },
     "configuration": {
-      "title": "Notebook Cleaner",
+      "title": "%configuration.title%",
       "properties": {
         "notebookCleaner.exclude": {
           "type": "array",
@@ -79,7 +90,7 @@
             "**/venv/**",
             "**/node_modules/**"
           ],
-          "description": "Glob patterns excluded when searching for notebooks. .ipynb_checkpoints is included by default.",
+          "description": "%configuration.exclude.description%",
           "scope": "resource"
         }
       }

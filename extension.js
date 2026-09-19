@@ -7,8 +7,12 @@ const { dirtyNotebookKeys, resolveTargets } = require("./lib/targets");
 const decoder = new TextDecoder("utf-8", { fatal: true });
 const encoder = new TextEncoder();
 
+function t(message, ...args) {
+  return vscode.l10n.t(message, ...args);
+}
+
 class SourceChangedError extends Error {
-  constructor(message = "The file changed while it was being processed.") {
+  constructor(message = t("The file changed while it was being processed.")) {
     super(message);
     this.name = "SourceChangedError";
   }
@@ -63,7 +67,7 @@ async function atomicWrite(uri, original, replacement) {
   try {
     await vscode.workspace.fs.writeFile(temporary, replacement);
     temporaryExists = true;
-    if (isDirty(uri)) throw new SourceChangedError("The notebook has unsaved edits.");
+    if (isDirty(uri)) throw new SourceChangedError(t("The notebook has unsaved edits."));
     const current = await vscode.workspace.fs.readFile(uri);
     if (!equalBytes(current, original)) throw new SourceChangedError();
     await vscode.workspace.fs.rename(temporary, uri, { overwrite: true });
@@ -85,15 +89,21 @@ function emptySummary(total) {
 
 function summaryMessage(summary) {
   const parts = [
-    `Updated ${summary.changed} of ${summary.total} notebook${summary.total === 1 ? "" : "s"}`,
-    `removed ${summary.removedOutputs} output${summary.removedOutputs === 1 ? "" : "s"}`,
-    `removed ${summary.removedCells} empty cell${summary.removedCells === 1 ? "" : "s"}`
+    t("Updated {0} of {1} Jupyter Notebook files", summary.changed, summary.total),
+    t("removed {0} outputs", summary.removedOutputs),
+    t("removed {0} empty cells", summary.removedCells)
   ];
-  if (summary.unchanged > 0) parts.push(`${summary.unchanged} unchanged`);
-  if (summary.dirty > 0) parts.push(`${summary.dirty} unsaved skipped`);
-  if (summary.conflicts > 0) parts.push(`${summary.conflicts} changed during processing`);
-  if (summary.failed > 0) parts.push(`${summary.failed} failed (see output)`);
-  return `Notebook Cleaner: ${parts.join("; ")}.`;
+  if (summary.unchanged > 0) parts.push(t("{0} unchanged", summary.unchanged));
+  if (summary.dirty > 0) parts.push(t("skipped {0} with unsaved changes", summary.dirty));
+  if (summary.conflicts > 0) parts.push(t("skipped {0} changed during processing", summary.conflicts));
+  if (summary.failed > 0) parts.push(t("{0} failed (see output)", summary.failed));
+  return t("Notebook Cleaner: {0}.", parts.join("; "));
+}
+
+function modeLabel(mode) {
+  if (mode === "outputs") return t("clear outputs");
+  if (mode === "emptyCells") return t("remove empty cells");
+  return t("clear outputs and remove empty cells");
 }
 
 async function run(mode, first, rest, output) {
@@ -101,21 +111,21 @@ async function run(mode, first, rest, output) {
   try {
     targets = await resolveTargets(selectedUris(first, rest), targetEnvironment());
   } catch (error) {
-    output.appendLine(`[error] Could not resolve selected files: ${String(error)}`);
-    void vscode.window.showErrorMessage("Notebook Cleaner: Could not inspect the selected files. See output for details.");
+    output.appendLine(`[${t("error")}] ${t("Could not resolve selected files")}: ${String(error)}`);
+    void vscode.window.showErrorMessage(t("Notebook Cleaner: Could not inspect the selected files. See output for details."));
     return;
   }
   if (targets.length === 0) {
-    void vscode.window.showInformationMessage("Notebook Cleaner: No notebooks found.");
+    void vscode.window.showInformationMessage(t("Notebook Cleaner: No Jupyter Notebook (.ipynb) files found."));
     return;
   }
 
   const summary = emptySummary(targets.length);
-  output.appendLine(`Starting ${mode} for ${targets.length} notebook(s).`);
+  output.appendLine(t("Starting {0} for {1} Jupyter Notebook files.", modeLabel(mode), targets.length));
   for (const uri of targets) {
     if (isDirty(uri)) {
       summary.dirty += 1;
-      output.appendLine(`[skipped: unsaved] ${uri.toString()}`);
+      output.appendLine(`[${t("skipped: unsaved")}] ${uri.toString()}`);
       continue;
     }
     try {
@@ -129,16 +139,16 @@ async function run(mode, first, rest, output) {
       summary.changed += 1;
       summary.removedOutputs += result.removedOutputs;
       summary.removedCells += result.removedCells;
-      output.appendLine(`[updated] ${uri.toString()}`);
+      output.appendLine(`[${t("updated")}] ${uri.toString()}`);
     } catch (error) {
       if (error instanceof SourceChangedError) {
         if (isDirty(uri)) summary.dirty += 1;
         else summary.conflicts += 1;
-        output.appendLine(`[skipped: changed] ${uri.toString()}: ${error.message}`);
+        output.appendLine(`[${t("skipped: changed")}] ${uri.toString()}: ${error.message}`);
       } else {
         summary.failed += 1;
         const message = error instanceof Error ? error.message : String(error);
-        output.appendLine(`[failed] ${uri.toString()}: ${message}`);
+        output.appendLine(`[${t("failed")}] ${uri.toString()}: ${message}`);
       }
     }
   }

@@ -1,0 +1,11 @@
+{
+  "extension.displayName": "Jupyter Notebook Cleaner",
+  "extension.description": "Jupyter Notebook（.ipynb）の出力や空のセルをまとめて削除します。",
+  "command.category": "Notebook Cleaner",
+  "submenu.label": "Notebook Cleaner",
+  "command.clearOutputs.title": "すべての出力を削除",
+  "command.removeEmptyCells.title": "空のセルを削除",
+  "command.cleanNotebook.title": "出力と空のセルを削除",
+  "configuration.title": "Notebook Cleaner",
+  "configuration.exclude.description": "Jupyter Notebook（.ipynb）の検索から除外する glob パターンです。.ipynb_checkpoints は初期設定では除外されません。"
+}

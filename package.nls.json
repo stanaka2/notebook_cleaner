@@ -1,0 +1,11 @@
+{
+  "extension.displayName": "Jupyter Notebook Cleaner",
+  "extension.description": "Clear outputs and remove empty cells from Jupyter Notebook (.ipynb) files in bulk.",
+  "command.category": "Notebook Cleaner",
+  "submenu.label": "Notebook Cleaner",
+  "command.clearOutputs.title": "Clear All Outputs",
+  "command.removeEmptyCells.title": "Remove Empty Cells",
+  "command.cleanNotebook.title": "Clear Outputs and Empty Cells",
+  "configuration.title": "Notebook Cleaner",
+  "configuration.exclude.description": "Glob patterns excluded when searching for Jupyter Notebook (.ipynb) files. .ipynb_checkpoints is included by default."
+}

@@ -1,4 +1,4 @@
-# Notebook Cleaner
+# Jupyter Notebook Cleaner
 
 Bulk-clean Jupyter Notebook (`.ipynb`) files from VS Code. Clear outputs, reset execution counts, and remove empty cells across a workspace, folder, or file selection.
 
@@ -24,7 +24,9 @@ Run a command from the Command Palette to process the workspace, or right-click 
 | --- | --- |
 | `Notebook Cleaner: Clear All Outputs` | Remove all outputs and reset execution counts. |
 | `Notebook Cleaner: Remove Empty Cells` | Remove empty code and Markdown cells. |
-| `Notebook Cleaner: Clean Notebook` | Clear outputs, then remove empty cells. |
+| `Notebook Cleaner: Clear Outputs and Empty Cells` | Clear outputs, then remove empty cells. |
+
+Command names, notifications, and settings descriptions are shown in Japanese when VS Code's display language is Japanese.
 
 There is no confirmation dialog. Commit important work or keep a backup before bulk changes.
 
