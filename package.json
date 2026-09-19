@@ -1,0 +1,92 @@
+{
+  "name": "notebook-cleaner",
+  "displayName": "Notebook Cleaner",
+  "publisher": "stanaka",
+  "description": "Safely clear outputs and remove empty cells from Jupyter notebooks in bulk.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stanaka2/notebook_cleaner.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Notebooks",
+    "Other"
+  ],
+  "keywords": [
+    "jupyter",
+    "notebook",
+    "ipynb",
+    "outputs",
+    "clean"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:notebookCleaner.clearOutputs",
+    "onCommand:notebookCleaner.removeEmptyCells",
+    "onCommand:notebookCleaner.cleanNotebook"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "notebookCleaner.clearOutputs",
+        "title": "Clear All Outputs",
+        "category": "Notebook Cleaner"
+      },
+      {
+        "command": "notebookCleaner.removeEmptyCells",
+        "title": "Remove Empty Cells",
+        "category": "Notebook Cleaner"
+      },
+      {
+        "command": "notebookCleaner.cleanNotebook",
+        "title": "Clean Notebook",
+        "category": "Notebook Cleaner"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "notebookCleaner.clearOutputs",
+          "when": "resourceExtname == .ipynb || explorerResourceIsFolder",
+          "group": "notebookCleaner@1"
+        },
+        {
+          "command": "notebookCleaner.removeEmptyCells",
+          "when": "resourceExtname == .ipynb || explorerResourceIsFolder",
+          "group": "notebookCleaner@2"
+        },
+        {
+          "command": "notebookCleaner.cleanNotebook",
+          "when": "resourceExtname == .ipynb || explorerResourceIsFolder",
+          "group": "notebookCleaner@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Notebook Cleaner",
+      "properties": {
+        "notebookCleaner.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/.venv/**",
+            "**/venv/**",
+            "**/node_modules/**"
+          ],
+          "description": "Glob patterns excluded when searching for notebooks. .ipynb_checkpoints is included by default.",
+          "scope": "resource"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "check": "node --check extension.js && node --check lib/notebook.js && node --check lib/targets.js",
+    "package": "npx @vscode/vsce package"
+  }
+}
